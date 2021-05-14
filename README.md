@@ -1,1 +1,3 @@
 # TimeKeeperCLI
+
+python timekeeper.py
