@@ -21,17 +21,7 @@ def convert_timestamp(activity=None, d_data=None):
         return delta
     else:
         # Else it converts new timestamp and returns the delta
-        print("@@@@@@@@@@@@@@@@ DEBUG DATA BELOW @@@@@@@@@@@@@@@@")
-        print("ACTIVITY PRINT --------")
-        print(activity)
-        print("ACTIVITY PRINT -----")
         clean_data = activity[1].replace(".", ":").split(":")
-        print("CLEAN DATA -------------")
-        print(clean_data)
-        print(type(clean_data))
-        print("CLEAN DATA -------------")
-        print("@@@@@@@@@@@@@ DEBUG DATA END @@@@@@@@@@@@@@@@@")
-
         try:
             clean_data_int = [int(x) for x in clean_data]
         except ValueError:
@@ -50,16 +40,8 @@ def read_report(json_data_file):
     with open(f"{json_data_file}") as json_file:
         data = json.load(json_file)
         clean_data = [activities.split("+") for activities in data]
-        print("@@@@@@@@@@@@@@@@ DEBUG DATA BELOW @@@@@@@@@@@@@@@@")
-        print("read_report clean_data ~~~~~~~~~~~~~")
-        print(clean_data)
-        print("read_report clean_data ~~~~~~~~~~~~~")
     
         for activity in clean_data:
-            print("read_report activity -----------------")
-            print(activity)
-            print("read_report activity -----------------")
-            print("@@@@@@@@@@@@@ DEBUG DATA END @@@@@@@@@@@@@@@@@")
             if activity[0] in d_set:
                 # If aleady in d, then add the two timestamps together and replace the value in d
                 
@@ -91,27 +73,6 @@ def weekly_print(start_date):
     weekly_set = {}
     stop = 7
 
-    def combine_sets(weekly_activities_set):
-        # Combines the weekly activities set and returns singular data output -> {'Other': '1:35:21', ... }
-        combined_set = {}
-
-        for key, value in weekly_activities_set.items(): # -> 2021-05-01.json - {'Undecided': '0:35:05' ... }
-            for activity, time_length in value.items(): # -> Undecided - 0:35:05
-                if activity in combined_set.keys():
-                    # If aleady in combined_set, then add the two timestamps together and replace the value in combined_set
-                    
-                    old_timestamp_delta = convert_timestamp(d_data=combined_set[activity])
-                    new_timestamp_delta = convert_timestamp(activity)
-
-                    total_timestamp = old_timestamp_delta + new_timestamp_delta
-                    combined_set[activity] = str(total_timestamp)
-
-                else:
-                    combined_set[activity] = time_length
-        
-        pretty_print(combined_set)
-
-
     for report, value in enumerate(json_files):
         if value == f"{start_date}.json":
             new_list = json_files[report:report+stop] # List of str -> json file names
@@ -121,8 +82,39 @@ def weekly_print(start_date):
             weekly_set[i] = read_report(f"reports/{i}")
     except UnboundLocalError:
         pass
-        combine_sets(weekly_set)  
+        combine_sets(weekly_set)
+
     combine_sets(weekly_set)
+
+def combine_sets(weekly_activities_set):
+    # Combines the weekly activities set and returns singular data output -> {'Other': '1:35:21', ... }
+    combined_set = {}
+
+    for key, value in weekly_activities_set.items(): # -> 2021-05-01.json - {'Undecided': '0:35:05' ... }
+        for activity, timer in value.items():
+            if activity in combined_set.keys():
+                exisitng_value = combined_set[activity]
+                new_value = timer
+
+                exisitng_value_split = exisitng_value.replace(".", ":").split(":")
+                new_value_split = new_value.replace(".", ":").split(":")
+
+                ex_value_split_int = [int(i) for i in exisitng_value_split]
+                new_value_split_int = [int(i) for i in new_value_split]
+
+                old_delta = timedelta(hours=ex_value_split_int[0], minutes=ex_value_split_int[1], seconds= ex_value_split_int[2])
+                new_delta = timedelta(hours=new_value_split_int[0], minutes=new_value_split_int[1], seconds=new_value_split_int[2])
+
+                delta = old_delta + new_delta
+                
+                combined_set[activity] = str(delta)
+
+            else:
+                combined_set[activity] = timer
+
+    pretty_print(combined_set)
+                
+
 
 
     
