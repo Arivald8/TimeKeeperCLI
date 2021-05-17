@@ -337,5 +337,12 @@ Activities successfully exported.
 >
 ```
 
+### How to run TimeKeeper
+
+Clone the repository and execute `python timekeeper.py`
+
+
+
+
 
 
