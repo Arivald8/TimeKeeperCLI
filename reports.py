@@ -1,6 +1,6 @@
 import json, os
 from time import time, ctime
-from datetime import timedelta, date
+from datetime import timedelta
 
 script_dir = os.path.dirname(__file__) #<-- absolute
 
@@ -68,10 +68,9 @@ def pretty_print(data_set):
     elif isinstance(data_set, list):
         print(data_set)
 
-def weekly_print(start_date):
+def weekly_print(start_date, stop):
     # Returns a weekly set of activities -> {'2021-05-01.json': {'Undecided': '0:35:05', 'Chess': '0:10:10.256330', ... }, '2021-05-02.json': {'Other': ... }}
     weekly_set = {}
-    stop = 7
 
     for report, value in enumerate(json_files):
         if value == f"{start_date}.json":
@@ -86,6 +85,7 @@ def weekly_print(start_date):
 
     combine_sets(weekly_set)
 
+
 def combine_sets(weekly_activities_set):
     # Combines the weekly activities set and returns singular data output -> {'Other': '1:35:21', ... }
     combined_set = {}
@@ -93,22 +93,21 @@ def combine_sets(weekly_activities_set):
     for key, value in weekly_activities_set.items(): # -> 2021-05-01.json - {'Undecided': '0:35:05' ... }
         for activity, timer in value.items():
             if activity in combined_set.keys():
-                exisitng_value = combined_set[activity]
-                new_value = timer
 
-                exisitng_value_split = exisitng_value.replace(".", ":").split(":")
-                new_value_split = new_value.replace(".", ":").split(":")
+                ex_value_split_int = [int(i) for i in combined_set[activity].replace(".", ":").split(":")]
+                new_value_split_int = [int(i) for i in timer.replace(".", ":").split(":")]
 
-                ex_value_split_int = [int(i) for i in exisitng_value_split]
-                new_value_split_int = [int(i) for i in new_value_split]
-
-                old_delta = timedelta(hours=ex_value_split_int[0], minutes=ex_value_split_int[1], seconds= ex_value_split_int[2])
-                new_delta = timedelta(hours=new_value_split_int[0], minutes=new_value_split_int[1], seconds=new_value_split_int[2])
-
-                delta = old_delta + new_delta
+                delta = timedelta(
+                    hours=ex_value_split_int[0], 
+                    minutes=ex_value_split_int[1], 
+                    seconds= ex_value_split_int[2]
+                    ) + timedelta(
+                        hours=new_value_split_int[0], 
+                        minutes=new_value_split_int[1], 
+                        seconds=new_value_split_int[2]
+                        )
                 
                 combined_set[activity] = str(delta)
-
             else:
                 combined_set[activity] = timer
 

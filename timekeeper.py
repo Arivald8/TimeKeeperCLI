@@ -57,9 +57,18 @@ def main():
                         while True:
                             user_start_date = input("> ")
                             cmd.available_commands[user_input](
-                                reports.weekly_print(user_start_date)
+                                reports.weekly_print(user_start_date, stop=7)
                             )
                             break
+
+                    elif user_date_selection == "monthly":
+                        print(printers.weekly_start_date)
+                        while True:
+                            user_start_date = input("> ")
+                            cmd.available_commands[user_input](
+                                reports.weekly_print(user_start_date, stop=30)
+                            )
+
                     break
 
             else:
