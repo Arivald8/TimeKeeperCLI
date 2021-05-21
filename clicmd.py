@@ -32,6 +32,8 @@ def start_activity():
         print("-----------------------------------")
         print(f'Activity "{activity.name}" stopped.\n Total time elapsed: {activity.activity_time()}')
         activity.store_activity()
+        
+        dump_activities()
 
 def show_activities():
     for key, value in activity_storage.items():
