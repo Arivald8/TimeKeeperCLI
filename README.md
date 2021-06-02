@@ -2,6 +2,10 @@
 
 Extremely simple and lightweight activity time tracker accessible as a command line interface tool. 
 
+TimeKeeper Front-End -> https://github.com/Arivald8/TimeKeeper-Front-End
+TimeKeeper Back-End -> https://github.com/Arivald8/TimeKeeper-Back-End
+(CLI will get integrated with the Django backend in the future)
+
 ## Overview
 
 TimeKeeper works by measuring the time between the start time and the finish time of any given activity.
